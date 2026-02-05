@@ -1,53 +1,47 @@
-# To learn more about how to use Nix to configure your environment
-# see: https://developers.google.com/idx/guides/customize-idx-env
 { pkgs, ... }: {
-  # Which nixpkgs channel to use.
-  channel = "stable-24.05"; # or "unstable"
-  # Use https://search.nixos.org/packages to find packages
+  # The Nix packages to make available in your workspace
   packages = [
-    # pkgs.go
-    # pkgs.python311
-    # pkgs.python311Packages.pip
-    # pkgs.nodejs_20
-    # pkgs.nodePackages.nodemon
+    (pkgs.python3.withPackages (ps: [
+      ps.Flask
+      ps.numpy
+      ps.midiutil
+      ps.librosa
+      ps.soundfile
+    ]))
+    pkgs.fluidsynth
+    pkgs.ffmpeg
+    pkgs.soundfont-fluid
+    pkgs.git
   ];
-  # Sets environment variables in the workspace
-  env = {};
+
+  # Set environment variables for UTF-8 support
+  env = {
+    LANG = "en_US.UTF-8";
+    LC_ALL = "en_US.UTF-8";
+  };
+
+  # The VS Code extensions to install in your workspace
   idx = {
-    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      # "vscodevim.vim"
-      "google.gemini-cli-vscode-ide-companion"
+      "ms-python.python"
     ];
-    # Enable previews
+
+    workspace = {
+      # The commands to run when the workspace is (re)started
+      onStart = {
+        # Nix automatically handles the environment setup
+      };
+    };
+
+    # Web previews
     previews = {
       enable = true;
       previews = {
-        # web = {
-        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-        #   # and show it in IDX's web preview panel
-        #   command = ["npm" "run" "dev"];
-        #   manager = "web";
-        #   env = {
-        #     # Environment variables to set for your server
-        #     PORT = "$PORT";
-        #   };
-        # };
-      };
-    };
-    # Workspace lifecycle hooks
-    workspace = {
-      # Runs when a workspace is first created
-      onCreate = {
-        # Example: install JS dependencies from NPM
-        # npm-install = "npm install";
-        # Open editors for the following files by default, if they exist:
-        default.openFiles = [ ".idx/dev.nix" "README.md" ];
-      };
-      # Runs when the workspace is (re)started
-      onStart = {
-        # Example: start a background task to watch and re-build backend code
-        # watch-backend = "npm run watch-backend";
+        web = {
+          # The command to start your web server
+          command = ["python" "-u" "app.py"];
+          manager = "web";
+        };
       };
     };
   };
