@@ -31,20 +31,16 @@
             text-align: center;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        h1 {
-            font-size: 2.5em;
-            color: #ffffff;
+        .wizard-step {
+            display: none;
         }
-        h2 {
-            font-size: 1.8em;
-            color: #e0e0e0;
+        .wizard-step.active {
+            display: block;
         }
-        h3 {
-            font-size: 1.2em;
-            color: #d0d0d0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 10px;
-            margin-top: 30px;
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
         }
         audio {
             width: 100%;
@@ -64,68 +60,6 @@
             color: #f0f0f0;
             resize: vertical;
         }
-        textarea::placeholder {
-            color: #a0a0a0;
-        }
-        .control-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        .control-group {
-            text-align: left;
-        }
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-            color: #c0c0c0;
-        }
-        select, button {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 16px;
-            background: rgba(0,0,0,0.3);
-            color: #f0f0f0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        select {
-            appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23c0c0c0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
-            background-repeat: no-repeat;
-            background-position: right 15px top 50%;
-            background-size: .65em auto;
-            padding-right: 40px;
-        }
-        button {
-            background: #5c67f2;
-            color: white;
-            font-weight: 700;
-            border: none;
-        }
-        button:hover {
-            background: #4a54c9;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        #recordButton.recording {
-            background: #e53935;
-        }
-        #playRecordingButton {
-            background: #43a047;
-            margin-top: 10px;
-        }
-        #generation-status, #recording-status {
-            margin-top: 15px;
-            font-weight: bold;
-            min-height: 20px;
-            text-align: center;
-            font-size: 1.1em;
-        }
     </style>
 </head>
 <body>
@@ -135,12 +69,11 @@
 
         <audio id="audioPlayer" controls></audio>
 
-        <div class="generated-music">
-            <h3>Compose Your Masterpiece</h3>
-            <textarea id="lyrics" placeholder="Enter your lyrics here to generate music from them..."></textarea>
-
-            <div class="control-grid">
-                <div class="control-group">
+        <div id="wizard">
+            <div class="wizard-step active" id="step1">
+                <h3>Step 1: Mood & Story</h3>
+                <textarea id="lyrics" placeholder="Enter your lyrics here..."></textarea>
+                 <div class="control-group">
                     <label for="emotion">Select Emotion</label>
                     <select id="emotion" name="emotion">
                         <option value="happy">Happy</option>
@@ -150,29 +83,19 @@
                         <option value="classical">Classical</option>
                     </select>
                 </div>
+                <div class="btn-container">
+                    <button onclick="nextStep()">Next</button>
+                </div>
+            </div>
+
+            <div class="wizard-step" id="step2">
+                <h3>Step 2: Musical Style</h3>
                 <div class="control-group">
                     <label for="language">Select Language/Style</label>
                     <select id="language" name="language">
                         <option value="bhojpuri">Bhojpuri</option>
                         <option value="hindi">Hindi</option>
                         <option value="punjabi">Punjabi</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="raga">Select Raga (Optional)</label>
-                    <select id="raga" name="raga">
-                        <option value="none">None</option>
-                        <option value="yaman">Raga Yaman</option>
-                        <option value="bhairav">Raga Bhairav</option>
-                        <option value="bageshri">Raga Bageshri</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="artist">Select Singer</label>
-                    <select id="artist" name="artist">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="kid">Kid</option>
                     </select>
                 </div>
                 <div class="control-group">
@@ -189,124 +112,99 @@
                         <option value="sarod">Sarod</option>
                     </select>
                 </div>
+                <div class="control-group">
+                    <label for="raga">Select Raga (Optional)</label>
+                    <select id="raga" name="raga">
+                        <option value="none">None</option>
+                        <option value="yaman">Raga Yaman</option>
+                        <option value="bhairav">Raga Bhairav</option>
+                        <option value="bageshri">Raga Bageshri</option>
+                    </select>
+                </div>
+                <div class="btn-container">
+                    <button onclick="prevStep()">Previous</button>
+                    <button onclick="nextStep()">Next</button>
+                </div>
             </div>
 
-            <h3>Record Your Voice (Optional)</h3>
-            <div class="control-grid">
+            <div class="wizard-step" id="step3">
+                <h3>Step 3: The Voice</h3>
                 <div class="control-group">
+                    <label for="artist">Select Singer</label>
+                    <select id="artist" name="artist">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="kid">Kid</option>
+                    </select>
+                </div>
+                 <div class="control-group">
                     <button id="recordButton">Start Recording</button>
                     <p id="recording-status"></p>
                 </div>
-                <div class="control-group">
-                    <button id="playRecordingButton" style="display: none;">Play Recording</button>
+                <div class="btn-container">
+                    <button onclick="prevStep()">Previous</button>
+                    <button onclick="nextStep()">Next</button>
                 </div>
             </div>
 
-            <button onclick="generateMusic()">Generate and Play Music</button>
-            <p id="generation-status"></p>
+            <div class="wizard-step" id="step4">
+                <h3>Step 4: Generate</h3>
+                 <p>You're all set! Click the button below to generate your masterpiece.</p>
+                <div class="btn-container">
+                    <button onclick="prevStep()">Previous</button>
+                    <button onclick="generateMusic()">Generate Music</button>
+                </div>
+                <p id="generation-status"></p>
+            </div>
         </div>
     </div>
 
     <script>
-        const audioPlayer = document.getElementById('audioPlayer');
-        const generationStatus = document.getElementById('generation-status');
-        const recordButton = document.getElementById('recordButton');
-        const recordingStatus = document.getElementById('recording-status');
-        const playRecordingButton = document.getElementById('playRecordingButton');
+        let currentStep = 1;
+        const wizard = document.getElementById('wizard');
+        const steps = wizard.getElementsByClassName('wizard-step');
 
-        let isRecording = false;
-        let mediaRecorder;
-        let audioChunks = [];
-
-        recordButton.addEventListener('click', () => {
-            if (!isRecording) {
-                startRecording();
-            } else {
-                stopRecording();
+        function showStep(step) {
+            for (let i = 0; i < steps.length; i++) {
+                steps[i].classList.remove('active');
             }
-        });
-
-        playRecordingButton.addEventListener('click', () => {
-            const recordingUrl = '/static/recorded_voice.wav?v=' + new Date().getTime();
-            audioPlayer.src = recordingUrl;
-            audioPlayer.play();
-            generationStatus.textContent = 'Playing recorded voice...';
-        });
-
-        function startRecording() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.start();
-                    isRecording = true;
-                    recordButton.textContent = 'Stop Recording';
-                    recordButton.classList.add('recording');
-                    recordingStatus.textContent = 'Recording...';
-                    playRecordingButton.style.display = 'none';
-                    audioChunks = [];
-
-                    mediaRecorder.addEventListener("dataavailable", event => {
-                        audioChunks.push(event.data);
-                    });
-
-                    mediaRecorder.addEventListener("stop", () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                        uploadRecording(audioBlob);
-                        isRecording = false;
-                        recordButton.textContent = 'Start Recording';
-                        recordButton.classList.remove('recording');
-                    });
-                })
-                .catch(error => {
-                    console.error("Error accessing microphone:", error);
-                    recordingStatus.textContent = "Error accessing microphone.";
-                });
+            steps[step - 1].classList.add('active');
         }
 
-        function stopRecording() {
-            mediaRecorder.stop();
+        function nextStep() {
+            if (currentStep < steps.length) {
+                currentStep++;
+                showStep(currentStep);
+            }
         }
 
-        function uploadRecording(blob) {
-            const formData = new FormData();
-            formData.append('audio_data', blob, 'recorded_voice.wav');
-
-            recordingStatus.textContent = 'Uploading recording...';
-
-            fetch('/upload_voice', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.error) throw new Error(data.error);
-                recordingStatus.textContent = 'Recording uploaded successfully!';
-                playRecordingButton.style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Upload failed:', error);
-                recordingStatus.textContent = 'Failed to upload recording.';
-            });
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
         }
 
         function generateMusic() {
-            generationStatus.textContent = 'Generating music... please wait.';
             const emotion = document.getElementById('emotion').value;
             const language = document.getElementById('language').value;
-            const artist = document.getElementById('artist').value;
-            const raga = document.getElementById('raga').value;
-            const lyrics = document.getElementById('lyrics').value;
             const instrument = document.getElementById('instrument').value;
+            const raga = document.getElementById('raga').value;
+            const artist = document.getElementById('artist').value;
+            const lyrics = document.getElementById('lyrics').value;
 
-            const url = `/generate?emotion=${emotion}&language=${language}&artist=${artist}&raga=${raga}&lyrics=${encodeURIComponent(lyrics)}&instrument=${instrument}`;
+            const generationStatus = document.getElementById('generation-status');
+            generationStatus.textContent = 'Generating music... please wait.';
+
+            const url = `/generate?emotion=${emotion}&language=${language}&instrument=${instrument}&raga=${raga}&artist=${artist}&lyrics=${encodeURIComponent(lyrics)}`;
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     if(data.error) throw new Error(data.error);
                     generationStatus.textContent = 'Playing generated music!';
-                    const musicUrl = data.melody_path + '?v=' + new Date().getTime();
-                    audioPlayer.src = musicUrl;
+                    const audioPlayer = document.getElementById('audioPlayer');
+                    audioPlayer.src = data.melody_path;
                     audioPlayer.play();
                 })
                 .catch(error => {
@@ -314,6 +212,8 @@
                     generationStatus.textContent = 'Error generating music.';
                 });
         }
+
+        showStep(currentStep);
     </script>
 </body>
 </html>
