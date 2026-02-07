@@ -28,6 +28,17 @@ DRUM_MAP = {
     'dhol_snare': 40,
 }
 
+INSTRUMENT_MAP = {
+    "piano": 0,
+    "guitar": 24,
+    "violin": 40,
+    "flute": 73,
+    "sitar": 104,
+    "santoor": 15,
+    "harmonium": 20,
+    "sarod": 105,
+}
+
 def get_base_note(artist):
     if artist == 'male':
         return 60
@@ -106,7 +117,11 @@ def generate_drums(language, length=32):
             if i % 2 == 0: drums[i].append(DRUM_MAP['hihat_closed'])
     return drums
 
-def get_instrument_program(language, artist):
+def get_instrument_program(instrument, language, artist):
+    if instrument in INSTRUMENT_MAP:
+        return INSTRUMENT_MAP[instrument]
+    
+    # Default logic if instrument is "auto" or not found
     if language == 'hindi':
         return 105
     if language == 'bhojpuri':

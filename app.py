@@ -34,7 +34,8 @@ def generate():
         raga = request.args.get('raga', 'none')
         language = request.args.get('language', 'hindi')
         lyrics = request.args.get('lyrics', '')
-        logging.info(f"Request: emotion={emotion}, artist={artist}, raga={raga}, language={language}, lyrics={lyrics}")
+        instrument = request.args.get('instrument', 'auto')
+        logging.info(f"Request: emotion={emotion}, artist={artist}, raga={raga}, language={language}, lyrics={lyrics}, instrument={instrument}")
 
         base_note = get_base_note(artist)
         notes = []
@@ -61,9 +62,9 @@ def generate():
         bassline = generate_bassline(melody, notes)
         drums = generate_drums(language, len(melody))
 
-        melody_program = get_instrument_program(language, artist)
-        harmony_program = 1
-        bass_program = 33
+        melody_program = get_instrument_program(instrument, language, artist)
+        harmony_program = 1 # Piano
+        bass_program = 33 # Electric Bass
 
         midi = MIDIFile(4)
         tracks = [(0, "Melody", melody, melody_program), 
