@@ -1,0 +1,7 @@
+flask
+numpy
+midiutil
+librosa
+soundfile
+gtts
+pydub
