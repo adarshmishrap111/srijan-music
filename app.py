@@ -1,26 +1,22 @@
 
 import os
 import logging
+import replicate
 from flask import Flask, request, jsonify, render_template, send_from_directory
-from midiutil import MIDIFile
-
-from music_generation import (
-    get_base_note,
-    get_raga_notes,
-    get_scale_notes,
-    generate_melody_from_lyrics,
-    generate_melody,
-    generate_harmony,
-    generate_bassline,
-    generate_drums,
-    get_instrument_program,
-)
-from audio_processing import merge_audio
 
 app = Flask(__name__)
 
+# Configure logging
 logging.basicConfig(level=logging.INFO, filename='app.log', filemode='w',
                     format='%(name)s - %(levelname)s - %(message)s')
+
+# --- Environment Variables --- #
+REPLICATE_API_TOKEN = os.environ.get('REPLICATE_API_TOKEN')
+if not REPLICATE_API_TOKEN:
+    logging.warning("REPLICATE_API_TOKEN not found. Please set it in your environment variables.")
+
+# --- Replicate Client --- #
+client = replicate.Client(api_token=REPLICATE_API_TOKEN)
 
 @app.route('/')
 def index():
@@ -28,110 +24,44 @@ def index():
 
 @app.route('/generate')
 def generate():
+    if not REPLICATE_API_TOKEN:
+        return jsonify({'error': 'Replicate API token is not configured. Please contact the administrator.'}), 500
+    
     try:
+        # --- Get Parameters --- #
         emotion = request.args.get('emotion', 'happy')
-        artist = request.args.get('artist', 'male')
-        raga = request.args.get('raga', 'none')
         language = request.args.get('language', 'hindi')
         lyrics = request.args.get('lyrics', '')
         instrument = request.args.get('instrument', 'auto')
-        logging.info(f"Request: emotion={emotion}, artist={artist}, raga={raga}, language={language}, lyrics={lyrics}, instrument={instrument}")
+        duration = int(request.args.get('duration', 8)) # Default 8 seconds
 
-        base_note = get_base_note(artist)
-        notes = []
-        tempo = 120
+        logging.info(f"Request: emotion={emotion}, language={language}, lyrics={lyrics}, instrument={instrument}, duration={duration}")
 
-        if raga != 'none':
-            notes = get_raga_notes(raga, base_note)
-            tempo = 90
-        
-        if not notes:
-            notes = get_scale_notes(emotion, base_note)
-            if emotion == 'sad': tempo = 80
-            elif emotion == 'calm': tempo = 70
-
-        if not notes:
-             return jsonify({'error': 'Could not determine musical scale.'}), 500
-
+        # --- Construct Prompt --- #
+        prompt = f"{emotion} {language} song"
         if lyrics:
-            melody = generate_melody_from_lyrics(lyrics, notes, tempo)
-        else:
-            melody = generate_melody(notes)
+            prompt = f"{lyrics}, a {emotion} {language} song"
+        if instrument != 'auto':
+            prompt += f" with {instrument}"
 
-        harmony = generate_harmony(melody, notes)
-        bassline = generate_bassline(melody, notes)
-        drums = generate_drums(language, len(melody))
+        logging.info(f"Generated Prompt: {prompt}")
 
-        melody_program = get_instrument_program(instrument, language, artist)
-        harmony_program = 1 # Piano
-        bass_program = 33 # Electric Bass
+        # --- Call Replicate API --- #
+        model = client.models.get("meta/musicgen")
+        version = model.versions.get("7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906")
+        output = version.predict(
+            prompt=prompt,
+            duration=duration
+        )
 
-        midi = MIDIFile(4)
-        tracks = [(0, "Melody", melody, melody_program), 
-                  (1, "Harmony", harmony, harmony_program),
-                  (2, "Bassline", bassline, bass_program)]
-
-        for track_num, name, pattern, program in tracks:
-            midi.addTrackName(track_num, 0, name)
-            midi.addTempo(track_num, 0, tempo)
-            midi.addProgramChange(track_num, track_num, 0, program)
-            for i, pitch in enumerate(pattern):
-                midi.addNote(track_num, track_num, pitch, i * 0.5, 0.5, 100 if track_num == 0 else 70)
-        
-        midi.addTrackName(3, 0, "Drums")
-        midi.addTempo(3, 0, tempo)
-        for i, beat in enumerate(drums):
-            for note in beat:
-                midi.addNote(3, 9, note, i * 0.5, 0.5, 100)
-
-        if not os.path.exists('static'):
-            os.makedirs('static')
-        midi_path = "static/output.mid"
-        with open(midi_path, "wb") as f:
-            midi.writeFile(f)
-
-        wav_path = "static/output.wav"
-        os.system(f"fluidsynth -ni /usr/share/sounds/sf2/FluidR3_GM.sf2 {midi_path} -F {wav_path} -r 44100")
-        
-        mp3_path = "static/output.mp3"
-        os.system(f"ffmpeg -i {wav_path} -y {mp3_path}")
-        
-        logging.info(f"Generated music: {mp3_path}")
-        return jsonify({'melody_path': mp3_path})
+        logging.info(f"Generated music URL: {output}")
+        return jsonify({'melody_path': output})
 
     except Exception as e:
         logging.error(f"Error in /generate: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/upload_voice', methods=['POST'])
-def upload_voice():
-    if 'audio_data' not in request.files:
-        return jsonify({'error': 'No audio file uploaded'}), 400
-    
-    file = request.files['audio_data']
-    if not os.path.exists('static'):
-        os.makedirs('static')
-
-    filepath = os.path.join('static', 'recorded_voice.wav')
-    file.save(filepath)
-    
-    logging.info(f"User voice saved to {filepath}. Processing not yet implemented.")
-
-    return jsonify({'success': True, 'path': filepath})
-
-@app.route('/merge_audio', methods=['POST'])
-def merge_audio_route():
-    try:
-        file1 = request.form['file1']
-        file2 = request.form['file2']
-        output_file = request.form['output_file']
-
-        merge_audio(file1, file2, output_file)
-
-        return jsonify({'success': True, 'output_path': output_file})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
+# --- Static File Serving (for existing HTML/JS) --- #
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)

@@ -1,8 +1,9 @@
-flask
-numpy
-midiutil
+Flask
+MIDIUtil
 librosa
-soundfile
-gtts
-pydub
+numpy
+gTTS
+fluidsynth
+ffmpeg
 gunicorn
+replicate
