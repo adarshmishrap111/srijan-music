@@ -46,8 +46,8 @@ def generate():
         logging.info(f"Speech Lyrics: {lyrics}, Voice Sample: {voice_sample_path}")
 
         # --- 1. Generate Instrumental Music --- #
-        music_model = client.models.get("meta/musicgen")
-        music_version = music_model.versions.get("7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906")
+        music_model = client.models.get("facebook/musicgen-stereo")
+        music_version = music_model.versions.get("dee88d05de5f873007c089450c237e8e4a77320473a21532f70337cf4614c24a")
         music_output = music_version.predict(
             prompt=prompt,
             duration=duration

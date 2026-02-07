@@ -1,0 +1,28 @@
+{
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "appHosting": {
+    "backends": [
+      {
+        "id": "srijan-music-backend",
+        "region": "us-central1",
+        "instanceSize": "small",
+        "cpu": 1,
+        "memory": "2Gi",
+        "entryPoint": "gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app",
+        "env": [
+          {
+            "variable": "API_KEY",
+            "secret": "API_KEY"
+          }
+        ]
+      }
+    ]
+  }
+}

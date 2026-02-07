@@ -13,10 +13,12 @@
       ps.soundfile
       ps.gtts
       ps.pydub
+      ps.gunicorn
     ]))
     pkgs.ffmpeg
     pkgs.fluidsynth
     pkgs.git
+    pkgs.firebase-tools
   ];
 
   # The VS Code extensions to install in your workspace
