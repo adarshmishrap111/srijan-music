@@ -33,6 +33,7 @@
       onCreate = {};
       # Runs every time the workspace is (re)started
       onStart = {
+        load-env = "source .env";
         # run-app = "python app.py";
       };
     };
