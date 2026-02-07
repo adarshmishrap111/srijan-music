@@ -31,6 +31,15 @@
             width: 100%;
             margin-top: 20px;
         }
+        textarea {
+            width: 95%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            margin-bottom: 20px;
+            height: 100px;
+        }
         .generated-music h2 {
             color: #333;
         }
@@ -79,6 +88,11 @@
         <div class="generated-music">
             <h2>एआई म्यूजिक जनरेशन</h2>
             
+             <div class="control-group">
+                <h3>अपने गीत के बोल लिखें (वैकल्पिक)</h3>
+                <textarea id="lyrics" placeholder="यहां अपने गीत के बोल दर्ज करें..."></textarea>
+            </div>
+
             <div class="control-grid">
                 <div class="control-group">
                     <label for="emotion">भाव चुनें:</label>
@@ -86,6 +100,17 @@
                         <option value="happy">खुश</option>
                         <option value="sad">उदास (दर्द भरा)</option>
                         <option value="calm">शांत</option>
+                        <option value="motivational">प्रेरणादायक</option>
+                        <option value="classical">शास्त्रीय</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="language">भाषा/शैली चुनें:</label>
+                    <select id="language" name="language">
+                        <option value="bhojpuri">भोजपुरी</option>
+                        <option value="hindi">हिंदी</option>
+                        <option value="punjabi">पंजाबी</option>
                     </select>
                 </div>
 
@@ -104,6 +129,7 @@
                     <select id="artist" name="artist">
                         <option value="male">पुरुष</option>
                         <option value="female">महिला</option>
+                        <option value="kid">बच्चा</option>
                     </select>
                 </div>
             </div>
@@ -205,10 +231,12 @@
         function generateMusic() {
             generationStatus.textContent = 'म्यूजिक बन रहा है... कृपया प्रतीक्षा करें।';
             const emotion = document.getElementById('emotion').value;
+            const language = document.getElementById('language').value;
             const artist = document.getElementById('artist').value;
             const raga = document.getElementById('raga').value;
+            const lyrics = document.getElementById('lyrics').value;
 
-            const url = `/generate?emotion=${emotion}&artist=${artist}&raga=${raga}`;
+            const url = `/generate?emotion=${emotion}&language=${language}&artist=${artist}&raga=${raga}&lyrics=${encodeURIComponent(lyrics)}`;
 
             fetch(url)
                 .then(response => response.json())

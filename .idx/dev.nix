@@ -1,45 +1,48 @@
-{ pkgs, ... }: {
+{
+  pkgs, 
+  ...
+}: {
   # The Nix packages to make available in your workspace
-  packages = [
+  # Search for packages on https://search.nixos.org/packages
+  packages = [ 
     (pkgs.python3.withPackages (ps: [
-      ps.Flask
+      ps.flask
       ps.numpy
       ps.midiutil
       ps.librosa
       ps.soundfile
+      ps.gtts
+      ps.pydub
     ]))
-    pkgs.fluidsynth
     pkgs.ffmpeg
-    pkgs.soundfont-fluid
+    pkgs.fluidsynth
     pkgs.git
   ];
 
-  # Set environment variables for UTF-8 support
-  env = {
-    LANG = "en_US.UTF-8";
-    LC_ALL = "en_US.UTF-8";
-  };
-
   # The VS Code extensions to install in your workspace
+  # Find extensions on https://open-vsx.org/
   idx = {
     extensions = [
       "ms-python.python"
     ];
 
+    # Workspace lifecycle hooks
     workspace = {
-      # The commands to run when the workspace is (re)started
+      # Runs when a workspace is first created
+      # Dependencies are managed by Nix, so pip install is not needed.
+      onCreate = {};
+      # Runs every time the workspace is (re)started
       onStart = {
-        # Nix automatically handles the environment setup
+        # run-app = "python app.py";
       };
     };
 
-    # Web previews
+    # Web-based previews
     previews = {
       enable = true;
       previews = {
         web = {
-          # The command to start your web server
-          command = ["python" "-u" "app.py"];
+          command = ["python" "app.py" "--port" "$PORT"];
           manager = "web";
         };
       };

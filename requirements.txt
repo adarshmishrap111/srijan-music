@@ -1,5 +1,0 @@
-Flask
-numpy
-midiutil
-librosa
-soundfile
