@@ -28,27 +28,20 @@ def generate():
         return jsonify({'error': 'Replicate API token is not configured. Please contact the administrator.'}), 500
     
     try:
-        # --- Get Parameters --- #
-        emotion = request.args.get('emotion', 'happy')
-        language = request.args.get('language', 'hindi')
-        lyrics = request.args.get('lyrics', '')
-        instrument = request.args.get('instrument', 'auto')
-        duration = int(request.args.get('duration', 8)) # Default 8 seconds
+        # --- Get Parameters from the new advanced UI --- #
+        prompt = request.args.get('prompt', '')
+        duration = int(request.args.get('duration', 8))
 
-        logging.info(f"Request: emotion={emotion}, language={language}, lyrics={lyrics}, instrument={instrument}, duration={duration}")
+        if not prompt:
+            return jsonify({'error': 'Prompt cannot be empty.'}), 400
 
-        # --- Construct Prompt --- #
-        prompt = f"{emotion} {language} song"
-        if lyrics:
-            prompt = f"{lyrics}, a {emotion} {language} song"
-        if instrument != 'auto':
-            prompt += f" with {instrument}"
+        logging.info(f"Received Advanced Prompt: {prompt}")
+        logging.info(f"Duration: {duration} seconds")
 
-        logging.info(f"Generated Prompt: {prompt}")
-
-        # --- Call Replicate API --- #
+        # --- Call Replicate API with the consolidated prompt --- #
         model = client.models.get("meta/musicgen")
         version = model.versions.get("7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906")
+        
         output = version.predict(
             prompt=prompt,
             duration=duration
@@ -61,7 +54,7 @@ def generate():
         logging.error(f"Error in /generate: {e}")
         return jsonify({'error': str(e)}), 500
 
-# --- Static File Serving (for existing HTML/JS) --- #
+# --- Static File Serving --- #
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
