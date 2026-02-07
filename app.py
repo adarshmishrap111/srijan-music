@@ -3,8 +3,13 @@ import os
 import logging
 import replicate
 from flask import Flask, request, jsonify, render_template, send_from_directory
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+# --- Uploads Configuration --- #
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, filename='app.log', filemode='w',
@@ -54,10 +59,30 @@ def generate():
         logging.error(f"Error in /generate: {e}")
         return jsonify({'error': str(e)}), 500
 
-# --- Static File Serving --- #
+# --- Voice Upload Endpoint --- #
+@app.route('/upload_voice', methods=['POST'])
+def upload_voice():
+    if 'audio_data' not in request.files:
+        return jsonify({'error': 'No audio file part'}), 400
+    file = request.files['audio_data']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        logging.info(f'Voice sample saved to {filepath}')
+        return jsonify({'path': f'/{filepath}'})
+
+# --- Static and Uploaded File Serving --- #
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
+
+@app.route('/uploads/<path:filename>')
+def serve_upload(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

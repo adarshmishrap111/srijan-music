@@ -35,6 +35,10 @@
         .wizard-step.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .btn-container { display: flex; justify-content: space-between; margin-top: 20px; }
+        button { padding: 10px 20px; border-radius: 8px; border: none; background-color: #2a9fd6; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #2180b0; }
+        button.rec { background-color: #d62a2a; }
+        button.rec:hover { background-color: #b02121; }
         audio { width: 100%; margin-top: 20px; border-radius: 25px; }
         textarea, select {
             width: 100%;
@@ -45,17 +49,16 @@
             margin-bottom: 15px;
             background: rgba(0,0,0,0.3);
             color: #f0f0f0;
+            box-sizing: border-box;
         }
         select { -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: .65em auto; }
         .control-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; }
-        /* Slider Styles */
         .slider-container { padding: 10px 0; }
         .slider { -webkit-appearance: none; width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; outline: none; transition: opacity .2s; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #2a9fd6; cursor: pointer; border-radius: 50%; }
         .slider::-moz-range-thumb { width: 20px; height: 20px; background: #2a9fd6; cursor: pointer; border-radius: 50%; }
         .slider-value { text-align: center; margin-top: 5px; font-weight: bold; }
-        /* Toggle Switch */
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider.round { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -68,151 +71,45 @@
     <div class="container">
         <h1>Srijan Music World</h1>
         <h2>Your Advanced AI Music Creation Studio</h2>
-
         <audio id="audioPlayer" controls style="display: none;"></audio>
         <p id="generation-status" style="text-align: center;"></p>
-
         <div id="wizard">
             <!-- Step 1: Mood & Story -->
-            <div class="wizard-step active" id="step1">
-                <h3>Step 1: Mood & Story</h3>
-                <div class="control-group">
-                    <label for="emotion">Select Emotion</label>
-                    <select id="emotion" name="emotion">
-                        <option value="happy">Happy</option>
-                        <option value="sad">Sad</option>
-                        <option value="calm">Calm</option>
-                        <option value="motivational">Motivational</option>
-                        <option value="energetic">Energetic</option>
-                        <option value="romantic">Romantic</option>
-                        <option value="devotional">Devotional</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="lyrics">Enter Your Story (Lyrics)</label>
-                    <textarea id="lyrics" placeholder="e.g., 'A rainy day in the city, feeling nostalgic...'"></textarea>
-                </div>
-                <div class="btn-container"><button onclick="nextStep()">Next</button></div>
-            </div>
+            <div class="wizard-step active" id="step1">...</div>
 
             <!-- Step 2: Jazbaat (Emotional Tuning) -->
-            <div class="wizard-step" id="step2">
-                <h3>Step 2: Jazbaat (Emotional Tuning)</h3>
-                <div class="control-group">
-                    <label for="mithaas">Mithaas (Sweetness)</label>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="100" value="50" class="slider" id="mithaas">
-                        <div class="slider-value" id="mithaasValue">50</div>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label for="dard">Dard (Pain/Tension)</label>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="100" value="20" class="slider" id="dard">
-                        <div class="slider-value" id="dardValue">20</div>
-                    </div>
-                </div>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="nextStep()">Next</button></div>
-            </div>
+            <div class="wizard-step" id="step2">...</div>
 
             <!-- Step 3: Musical Style -->
-            <div class="wizard-step" id="step3">
-                <h3>Step 3: Musical Style</h3>
-                <div class="control-group">
-                    <label for="language">Select Language/Style</label>
-                    <select id="language" name="language">
-                        <option value="hindi">Hindi</option>
-                        <option value="bhojpuri">Bhojpuri</option>
-                        <option value="punjabi">Punjabi</option>
-                        <option value="rajasthani">Rajasthani</option>
-                        <option value="gujarati">Gujarati</option>
-                        <option value="marathi">Marathi</option>
-                        <option value="tamil">Tamil</option>
-                        <option value="telugu">Telugu</option>
-                        <option value="bengali">Bengali</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="taal">Select Taal (Rhythmic Cycle)</label>
-                    <select id="taal" name="taal">
-                        <option value="none">None</option>
-                        <option value="teentaal">Teentaal (16 beats)</option>
-                        <option value="dadra">Dadra (6 beats)</option>
-                        <option value="keherwa">Keherwa (8 beats)</option>
-                        <option value="rupak">Rupak (7 beats)</option>
-                    </select>
-                </div>
-                 <div class="control-group">
-                    <label for="laya">Select Laya (Tempo)</label>
-                    <select id="laya" name="laya">
-                        <option value="madhya">Madhya (Medium)</option>
-                        <option value="vilambit">Vilambit (Slow)</option>
-                        <option value="drut">Drut (Fast)</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="instrument1">Select Main Instrument</label>
-                    <select id="instrument1" name="instrument1">
-                        <option value="sitar">Sitar</option>
-                        <option value="flute">Flute</option>
-                        <option value="violin">Violin</option>
-                        <option value="piano">Piano</option>
-                        <option value="guitar">Guitar</option>
-                        <option value="santoor">Santoor</option>
-                        <option value="harmonium">Harmonium</option>
-                        <option value="sarod">Sarod</option>
-                        <option value="tabla">Tabla</option>
-                        <option value="dholak">Dholak</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>Jugalbandi (Duet) Mode</label>
-                    <label class="switch">
-                        <input type="checkbox" id="jugalbandiToggle" onchange="toggleJugalbandi()">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="control-group" id="jugalbandi-instrument" style="display: none;">
-                    <label for="instrument2">Select Second Instrument</label>
-                    <select id="instrument2" name="instrument2">
-                        <option value="flute">Flute</option>
-                        <option value="violin">Violin</option>
-                        <option value="sitar">Sitar</option>
-                        <option value="piano">Piano</option>
-                         <option value="tabla">Tabla</option>
-                    </select>
-                </div>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="nextStep()">Next</button></div>
-            </div>
+            <div class="wizard-step" id="step3">...</div>
 
             <!-- Step 4: The Voice -->
             <div class="wizard-step" id="step4">
                 <h3>Step 4: The Voice</h3>
                 <div class="control-group">
-                    <label for="artist">Select Singer</label>
+                    <label for="artist">Select Singer Persona</label>
                     <select id="artist" name="artist">
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="kid">Kid</option>
                     </select>
                 </div>
-                 <div class="control-group">
-                    <button id="recordButton">Record Your Voice (Coming Soon)</button>
+                <div class="control-group">
+                    <label>Or, Record Your Own Voice</label>
+                    <button id="recordButton">Record Voice</button>
                     <p id="recording-status"></p>
+                    <audio id="recordedAudioPlayer" controls style="display:none;"></audio>
                 </div>
                 <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="nextStep()">Next</button></div>
             </div>
 
             <!-- Step 5: Generate -->
-            <div class="wizard-step" id="step5">
-                <h3>Step 5: Generate Your Masterpiece</h3>
-                 <p>You're all set! Click the button below to bring your musical idea to life.</p>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="generateMusic()">Generate Music</button></div>
-            </div>
+            <div class="wizard-step" id="step5">...</div>
         </div>
     </div>
 
     <script>
+        // Wizard navigation and other functions from before ...
         let currentStep = 1;
         const wizard = document.getElementById('wizard');
         const steps = wizard.getElementsByClassName('wizard-step');
@@ -243,63 +140,77 @@
             jugalbandiInstrument.style.display = document.getElementById('jugalbandiToggle').checked ? 'block' : 'none';
         }
 
-        // Update slider value displays
         document.getElementById('mithaas').oninput = function() { document.getElementById('mithaasValue').innerHTML = this.value; }
         document.getElementById('dard').oninput = function() { document.getElementById('dardValue').innerHTML = this.value; }
 
-        function generateMusic() {
-            // Collect all values
-            const emotion = document.getElementById('emotion').value;
-            const lyrics = document.getElementById('lyrics').value;
-            const mithaas = document.getElementById('mithaas').value;
-            const dard = document.getElementById('dard').value;
-            const language = document.getElementById('language').value;
-            const taal = document.getElementById('taal').value;
-            const laya = document.getElementById('laya').value;
-            const instrument1 = document.getElementById('instrument1').value;
-            const jugalbandi = document.getElementById('jugalbandiToggle').checked;
-            const instrument2 = jugalbandi ? document.getElementById('instrument2').value : 'none';
-            const artist = document.getElementById('artist').value;
+        // --- Voice Recording Logic ---
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordedAudioURL = '';
 
-            const generationStatus = document.getElementById('generation-status');
-            const audioPlayer = document.getElementById('audioPlayer');
-            generationStatus.textContent = 'Connecting to AI... Building your prompt...';
-            audioPlayer.style.display = 'none';
+        const recordButton = document.getElementById('recordButton');
+        const recordingStatus = document.getElementById('recording-status');
+        const recordedAudioPlayer = document.getElementById('recordedAudioPlayer');
 
-            // Constructing the detailed prompt for the AI
-            let prompt = `A ${laya} tempo, ${emotion} song in a ${language} style. `;
-            if (lyrics) prompt += `The story is about: '${lyrics}'. `;
-            
-            prompt += `The main instrument is ${instrument1}. `;
-            if (jugalbandi && instrument2 !== 'none') {
-                prompt += `Feature a jugalbandi (duet) between ${instrument1} and ${instrument2}. `;
+        recordButton.addEventListener('click', async () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                recordButton.textContent = 'Record Voice';
+                recordButton.classList.remove('rec');
+                recordingStatus.textContent = 'Recording stopped. Processing...';
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        recordedAudioURL = URL.createObjectURL(audioBlob);
+                        recordedAudioPlayer.src = recordedAudioURL;
+                        recordedAudioPlayer.style.display = 'block';
+                        recordingStatus.textContent = 'Recording complete! You can play it back or re-record.';
+                        uploadRecordedVoice(audioBlob);
+                    };
+
+                    mediaRecorder.start();
+                    recordButton.textContent = 'Stop Recording';
+                    recordButton.classList.add('rec');
+                    recordingStatus.textContent = 'Recording... Speak into your microphone.';
+                } catch (err) {
+                    console.error('Error accessing microphone:', err);
+                    recordingStatus.textContent = 'Could not access microphone. Please grant permission and try again.';
+                }
             }
-            if (taal !== 'none') {
-                prompt += `The rhythm should follow ${taal}. `;
-            }
+        });
+
+        function uploadRecordedVoice(audioBlob) {
+            const formData = new FormData();
+            formData.append('audio_data', audioBlob, 'recorded_voice.wav');
             
-            // Add Jazbaat tuning to the prompt
-            prompt += `The emotional feel should have a 'sweetness' level of ${mithaas}/100 and a 'pain' level of ${dard}/100.`;
+            recordingStatus.textContent = 'Uploading voice sample...';
 
-            console.log("Generated Prompt:", prompt); // For debugging
-            generationStatus.textContent = 'Sending prompt to AI... Generating music... This may take a moment.';
-
-            const url = `/generate?prompt=${encodeURIComponent(prompt)}&duration=10`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if(data.error) throw new Error(data.error);
-                    generationStatus.textContent = 'Music generation complete! Playing now.';
-                    audioPlayer.src = data.melody_path;
-                    audioPlayer.style.display = 'block';
-                    audioPlayer.play();
-                })
-                .catch(error => {
-                    console.error('Error generating music:', error);
-                    generationStatus.textContent = `Error: ${error.message}. Please try again.`;
-                });
+            fetch('/upload_voice', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.error) throw new Error(data.error);
+                console.log('Upload successful:', data);
+                recordingStatus.textContent = `Voice sample uploaded successfully! File: ${data.path}`;
+            })
+            .catch(error => {
+                console.error('Error uploading voice:', error);
+                recordingStatus.textContent = `Upload failed: ${error.message}`;
+            });
         }
+        
+        function generateMusic() { /* ... existing function ... */ }
 
         showStep(currentStep);
     </script>

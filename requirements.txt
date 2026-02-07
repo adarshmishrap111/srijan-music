@@ -1,9 +1,3 @@
-Flask
-MIDIUtil
-librosa
-numpy
-gTTS
-fluidsynth
-ffmpeg
-gunicorn
+flask
 replicate
+werkzeug
