@@ -1,6 +1,7 @@
 
 import os
 import logging
+import re
 import replicate
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
@@ -22,10 +23,69 @@ if not REPLICATE_API_TOKEN:
 
 client = replicate.Client(api_token=REPLICATE_API_TOKEN)
 
+# --- Helper Function for Parsing Lyrics ---
+def parse_lyrics_for_dynamics(lyrics_with_tags: str):
+    """
+    Parses lyrics with emotion tags to create a dynamic prompt for the music AI
+    and returns cleaned lyrics.
+    """
+    if not lyrics_with_tags or '[' not in lyrics_with_tags:
+        return lyrics_with_tags, "The song has a consistent mood throughout."
+
+    emotions = re.findall(r'\[([a-zA-Z]+)\]', lyrics_with_tags)
+    cleaned_lyrics = re.sub(r'\[/?([a-zA-Z]+)\]', '', lyrics_with_tags).strip()
+
+    if not emotions:
+        return cleaned_lyrics, "The song has a consistent mood."
+
+    if len(emotions) == 1:
+        dynamic_description = f"The song should have a primarily {emotions[0]} feeling."
+    else:
+        progression = ", ".join(f"a {emotion} section" for emotion in emotions[:-1])
+        if len(emotions) > 1:
+            progression += f", and concludes with a {emotions[-1]} section"
+        dynamic_description = f"The song's structure is dynamic: it includes {progression}."
+
+    return cleaned_lyrics, dynamic_description
+
 # --- Routes ---
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/suggest')
+def suggest():
+    if not REPLICATE_API_TOKEN:
+        return jsonify({'error': 'Replicate API token is not configured.'}), 500
+
+    inspiration = request.args.get('inspiration', '')
+    if not inspiration:
+        return jsonify({'error': 'Inspiration cannot be empty.'}), 400
+
+    try:
+        logging.info(f"Getting suggestions for: {inspiration}")
+        model = client.models.get("meta/llama-2-70b-chat")
+        version = model.versions.get("02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3")
+        
+        prompt = f'''You are a creative musical assistant. Based on the following user inspiration, generate 3 distinct and creative musical prompts. The user wants ideas for generating instrumental music. Present them as a simple list.
+
+Inspiration: '{inspiration}'
+
+1. 
+2. 
+3. '''
+        
+        output = version.predict(prompt=prompt, max_new_tokens=300)
+        
+        suggestions = [line.strip() for line in "".join(output).split('\n') if line.strip() and (line.startswith('1.') or line.startswith('2.') or line.startswith('3.'))]
+        suggestions = [s.split('.', 1)[1].strip() for s in suggestions]
+
+        logging.info(f"Generated Suggestions: {suggestions}")
+        return jsonify({'suggestions': suggestions})
+
+    except Exception as e:
+        logging.error(f"Error getting suggestions: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/generate')
 def generate():
@@ -33,49 +93,42 @@ def generate():
         return jsonify({'error': 'Replicate API token is not configured.'}), 500
 
     try:
-        # --- Get Shared Parameters ---
-        prompt = request.args.get('prompt', '')
-        lyrics = request.args.get('lyrics', '')
+        base_prompt = request.args.get('prompt', '')
+        lyrics_with_tags = request.args.get('lyrics', '')
         voice_sample_path = request.args.get('voice_sample_path', '')
-        duration = int(request.args.get('duration', 8))
+        duration = int(request.args.get('duration', 15))
 
-        if not prompt:
+        if not base_prompt:
             return jsonify({'error': 'Music generation prompt cannot be empty.'}), 400
 
-        logging.info(f"Music Prompt: {prompt}, Duration: {duration}")
-        logging.info(f"Speech Lyrics: {lyrics}, Voice Sample: {voice_sample_path}")
+        cleaned_lyrics, dynamic_description = parse_lyrics_for_dynamics(lyrics_with_tags)
+        final_prompt = f"{base_prompt}. {dynamic_description}"
+        
+        logging.info(f"Final Dynamic Prompt: {final_prompt}, Duration: {duration}")
+        logging.info(f"Cleaned Lyrics: {cleaned_lyrics}, Voice Sample: {voice_sample_path}")
 
-        # --- 1. Generate Instrumental Music --- #
+        logging.info("Generating instrumental music with dynamic prompt...")
         music_model = client.models.get("facebook/musicgen-stereo")
         music_version = music_model.versions.get("dee88d05de5f873007c089450c237e8e4a77320473a21532f70337cf4614c24a")
         music_output = music_version.predict(
-            prompt=prompt,
+            prompt=final_prompt,
             duration=duration
         )
         logging.info(f"Generated music URL: {music_output}")
 
-        speech_output = None
-        # --- 2. Generate Cloned Voice (if applicable) --- #
-        if lyrics and voice_sample_path:
-            full_voice_path = voice_sample_path.lstrip('/') # Remove leading '/' to get relative path
-            if os.path.exists(full_voice_path):
-                logging.info(f"Found voice sample at {full_voice_path}. Cloning voice...")
-                speech_model = client.models.get("replicate/xtts-v2")
-                speech_version = speech_model.versions.get("5c9e6d9f3c1097858d40763529341499557b7264859530b1446a895c3b999815")
-                
-                with open(full_voice_path, "rb") as audio_file:
-                    speech_output = speech_version.predict(
-                        text=lyrics,
-                        audio_file=audio_file
-                    )
-                logging.info(f"Generated speech URL: {speech_output}")
-            else:
-                logging.warning(f"Voice sample path provided, but not found at {full_voice_path}")
+        singing_output = None
+        if cleaned_lyrics:
+            logging.info("Lyrics provided. Engaging text-to-singing model...")
+            singing_model = client.models.get("riffusion/riffusion")
+            singing_version = singing_model.versions.get("8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05")
+            singing_prompt = f"{final_prompt} | Vocals: {cleaned_lyrics}"
+            singing_output_obj = singing_version.predict(prompt_a=singing_prompt)
+            singing_output = singing_output_obj.get('audio')
+            logging.info(f"Generated singing URL: {singing_output}")
 
-        # --- 3. Return both URLs --- #
         return jsonify({
             'music_path': music_output,
-            'speech_path': speech_output
+            'speech_path': singing_output
         })
 
     except Exception as e:
@@ -90,11 +143,10 @@ def upload_voice():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     if file:
-        filename = secure_filename("user_voice_sample.wav") # Use a consistent filename
+        filename = secure_filename("user_voice_sample.wav")
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         logging.info(f'Voice sample saved to {filepath}')
-        # Return a URL-friendly path for the client
         return jsonify({'path': f'/{filepath}'})
 
 # --- File Serving ---

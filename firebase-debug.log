@@ -1,0 +1,39 @@
+[debug] [2026-02-07T13:49:05.251Z] ----------------------------------------------------------------------
+[debug] [2026-02-07T13:49:05.254Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/c776mhyhgykcld7p90ajrka149ifn61a-firebase-tools-14.26.0/lib/node_modules/firebase-tools/lib/bin/firebase.js deploy
+[debug] [2026-02-07T13:49:05.255Z] CLI Version:   14.26.0
+[debug] [2026-02-07T13:49:05.255Z] Platform:      linux
+[debug] [2026-02-07T13:49:05.255Z] Node Version:  v20.19.1
+[debug] [2026-02-07T13:49:05.257Z] Time:          Sat Feb 07 2026 13:49:05 GMT+0000 (Coordinated Universal Time)
+[debug] [2026-02-07T13:49:05.258Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-02-07T13:49:05.261Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-02-07T13:49:05.749Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"appHosting"}
+[debug] [2026-02-07T13:49:05.751Z] No OAuth tokens found
+[debug] [2026-02-07T13:49:05.751Z] No OAuth tokens found
+[error] Failed to fetch Firebase Project from current Studio Workspace: Unable to refresh auth: not yet authenticated.
+[debug] [2026-02-07T13:49:05.758Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-07T13:49:06.089Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-02-07T13:49:06.090Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-02-07T13:49:24.218Z] Running auto auth
+[debug] [2026-02-07T13:49:24.243Z] [iam] checking project srijan-music-world for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-02-07T13:49:24.244Z] No OAuth tokens found
+[debug] [2026-02-07T13:49:24.245Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/srijan-music-world:testIamPermissions [none]
+[debug] [2026-02-07T13:49:24.245Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/srijan-music-world:testIamPermissions x-goog-quota-user=projects/srijan-music-world
+[debug] [2026-02-07T13:49:24.245Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/srijan-music-world:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-02-07T13:49:25.184Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/srijan-music-world:testIamPermissions 200
+[debug] [2026-02-07T13:49:25.184Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/srijan-music-world:testIamPermissions {}
+[debug] [2026-02-07T13:49:25.184Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project srijan-music-world:
+
+  firebase.projects.get
+  firebasehosting.sites.update
+[debug] [2026-02-07T13:49:25.185Z] No OAuth tokens found
+[debug] [2026-02-07T13:49:25.185Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/srijan-music-world [none]
+[debug] [2026-02-07T13:49:25.681Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/srijan-music-world 403
+[debug] [2026-02-07T13:49:25.681Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/srijan-music-world {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-02-07T13:49:25.682Z] Request to https://firebase.googleapis.com/v1beta1/projects/srijan-music-world had HTTP Error: 403, The caller does not have permission
+[debug] [2026-02-07T13:49:25.684Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/srijan-music-world had HTTP Error: 403, The caller does not have permission
+    at responseToError (/nix/store/c776mhyhgykcld7p90ajrka149ifn61a-firebase-tools-14.26.0/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/nix/store/c776mhyhgykcld7p90ajrka149ifn61a-firebase-tools-14.26.0/lib/node_modules/firebase-tools/lib/apiv2.js:322:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[error] 
+[error] Error: Failed to get Firebase project srijan-music-world. Please make sure the project exists and your account has permission to access it.
