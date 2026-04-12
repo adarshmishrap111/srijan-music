@@ -1,1 +1,11 @@
+# Python cache
+__pycache__/
+
+# Environment files
 .env
+
+# Log files
+*.log
+
+# OS-specific files
+.DS_Store

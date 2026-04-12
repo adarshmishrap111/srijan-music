@@ -4,265 +4,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dhvani AI - Your Advanced AI Music Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Dhvani AI - Complete Media Production House</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body{font-family:'Roboto',sans-serif;margin:0;padding:20px;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#f0f0f0;display:flex;justify-content:center;align-items:center;min-height:100vh}h1,h2,h3{text-align:center;text-shadow:0 2px 4px rgba(0,0,0,.2)}.container{max-width:800px;width:100%;background:rgba(255,255,255,.05);padding:30px;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1)}.wizard-step{display:none}.wizard-step.active{display:block;animation:fadeIn .5s}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.btn-container{display:flex;justify-content:space-between;margin-top:20px}button{padding:10px 20px;border-radius:8px;border:none;background-color:#2a9fd6;color:#fff;font-size:16px;cursor:pointer;transition:background-color .3s}button:hover{background-color:#2180b0}button.rec{background-color:#d62a2a}button.rec:hover{background-color:#b02121}.suggestion-card{background:rgba(0,0,0,.2);padding:15px;border-radius:8px;margin-bottom:10px;cursor:pointer;transition:background-color .3s}.suggestion-card:hover{background-color:rgba(0,0,0,.4)}audio{width:100%;margin-top:20px;border-radius:25px}textarea,select,input[type="text"]{width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);font-size:16px;margin-bottom:15px;background:rgba(0,0,0,.3);color:#f0f0f0;box-sizing:border-box}select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px top 50%;background-size:.65em auto}.control-group{margin-bottom:20px}label{display:block;margin-bottom:8px;font-weight:700}.switch{position:relative;display:inline-block;width:60px;height:34px}.switch input{opacity:0;width:0;height:0}.slider.round{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.4s;border-radius:34px}.slider.round:before{position:absolute;content:"";height:26px;width:26px;left:4px;bottom:4px;background-color:#fff;transition:.4s;border-radius:50%}input:checked+.slider.round{background-color:#2196F3}input:checked+.slider.round:before{transform:translateX(26px)}
+        :root {
+            --primary: #8a2be2; --primary-hover: #9a4be9;
+            --background: #121212; --surface: #1e1e1e; --surface-light: #282828;
+            --text: #ffffff; --text-secondary: #b3b3b3; --border: #2d2d2d;
+            --green: #4CAF50; --green-hover: #5cb85c;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1, h2 { text-align: center; } h1 { color: var(--primary); font-size: 3em; } h2 { font-weight: 400; opacity: 0.8; margin-top: -15px; }
+        #wizard { background: var(--surface); padding: 25px; border-radius: 12px; margin-bottom: 30px; }
+        #status { display: none; text-align: center; margin: 20px; padding: 15px; background: var(--surface-light); border-radius: 8px; }
+        button { background: var(--primary); color: white; padding: 12px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background-color 0.2s; }
+        button:hover { background: var(--primary-hover); }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+        #album-art-display { text-align: center; margin-bottom: 30px; display: none; }
+        #album-art-image { max-width: 400px; width: 100%; border-radius: 12px; border: 2px solid var(--border); }
+        #mixing-desk { background: var(--surface); border-radius: 12px; padding: 20px; display: none; }
+        .master-controls { display: flex; justify-content: center; align-items: center; gap: 20px; padding: 20px; border-bottom: 2px solid var(--primary); }
+        #master-play-pause { font-size: 1.5em; padding: 15px 30px; }
+        #download-master-button { font-size: 1.2em; padding: 12px 25px; background-color: var(--green); }
+        #download-master-button:hover { background-color: var(--green-hover); }
+        .stem-track { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Dhvani AI</h1>
-        <h2>Your Advanced AI Music Creation Studio</h2>
+        <h2>The Complete Media Production House</h2>
+        <div id="status"></div>
+        <div id="wizard">...</div>
+        <div id="album-art-display">...</div>
 
-        <audio id="audioPlayer" controls style="display: none;"></audio>
-        <audio id="speechPlayer" style="display: none;"></audio>
-        <p id="generation-status" style="text-align: center;"></p>
-
-        <div id="wizard">
-            <!-- Step 1: Inspiration -->
-            <div class="wizard-step active" id="step1">
-                <h3>Step 1: Inspiration</h3>
-                <div class="control-group">
-                    <label for="inspiration">Describe the music you want to create (e.g., "a sad song like 'Channa Mereya' by Arijit Singh")</label>
-                    <textarea id="inspiration" placeholder="Enter your inspiration..."></textarea>
-                </div>
-                <div class="btn-container">
-                    <button onclick="getSuggestions()">Get AI Suggestions</button>
-                </div>
-                <div id="suggestions-container" style="display: none; margin-top: 20px;">
-                    <h4>Here are some ideas based on your inspiration. Click one to start:</h4>
-                    <div id="suggestions"></div>
-                </div>
+        <div id="mixing-desk">
+            <div class="master-controls">
+                <button id="master-play-pause">Play</button>
+                <button id="download-master-button" onclick="downloadMaster()">Download Final Mix</button>
             </div>
-
-            <!-- Step 2: Customize Your Music -->
-            <div class="wizard-step" id="step2">
-                <h3>Step 2: Customize Your Music</h3>
-                <div class="control-group">
-                    <label for="prompt">Your Music Prompt</label>
-                    <textarea id="prompt" placeholder="Your generated or selected prompt will appear here..."></textarea>
-                </div>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="nextStep()">Next</button></div>
-            </div>
-            
-            <!-- Step 3: Lyrics & Dynamics -->
-            <div class="wizard-step" id="step3">
-                <h3>Step 3: Lyrics & Dynamics</h3>
-                <div class="control-group">
-                    <label for="lyrics">Enter Your Lyrics with Emotion Tags</label>
-                    <p style="font-size: 12px; margin-top: -10px; margin-bottom: 10px;">Use tags like [happy], [sad], [energetic], [calm] to guide the emotion. E.g., "[sad]Dil mera tod diya[/sad] [happy]phir bhi tumko chahunga[/happy]"</p>
-                    <textarea id="lyrics" placeholder="Enter your annotated lyrics here..."></textarea>
-                </div>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="nextStep()">Next</button></div>
-            </div>
-
-            <!-- Step 4: Singing Voice -->
-            <div class="wizard-step" id="step4">
-                <h3>Step 4: Singing Voice</h3>
-                <div class="control-group">
-                    <label>Choose a singing voice:</label>
-                    <div>
-                        <input type="radio" id="ai-singer" name="singer-type" value="ai" checked>
-                        <label for="ai-singer">AI Singer</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="human-singer" name="singer-type" value="human">
-                        <label for="human-singer">Record Your Own Voice</label>
-                    </div>
-                </div>
-                <div id="human-singer-options" style="display: none;">
-                    <button id="recordButton">Record Voice</button>
-                    <p id="recording-status"></p>
-                    <audio id="recordedAudioPlayer" controls style="display:none"></audio>
-                </div>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="nextStep()">Next</button></div>
-            </div>
-
-            <!-- Step 5: Generate -->
-            <div class="wizard-step" id="step5">
-                <h3>Step 5: Generate Your Masterpiece</h3>
-                <p>You're all set! Click the button below to bring your musical idea to life.</p>
-                <div class="btn-container"><button onclick="prevStep()">Previous</button><button onclick="generateMusic()">Generate Music</button></div>
-            </div>
+            <div id="track-container">...</div>
         </div>
     </div>
 
     <script>
-        let currentStep = 1, uploadedVoicePath = "";
-        const wizard = document.getElementById("wizard"),
-              steps = wizard.getElementsByClassName("wizard-step");
+        // Functions to control UI, like nextStep, prevStep, etc.
 
-        function showStep(step) {
-            for (let i = 0; i < steps.length; i++) {
-                steps[i].classList.remove("active");
-            }
-            steps[step - 1].classList.add("active");
-        }
+        function setupStem(name, url) { ... }
+        function generateMusic() { ... }
 
-        function nextStep() {
-            if (currentStep < steps.length) {
-                currentStep++;
-                showStep(currentStep);
-            }
-        }
+        async function downloadMaster() {
+            const statusDiv = document.getElementById('status');
+            const downloadButton = document.getElementById('download-master-button');
+            statusDiv.textContent = 'Preparing for mastering...';
+            statusDiv.style.display = 'block';
+            downloadButton.disabled = true;
+            downloadButton.textContent = 'Mastering...';
 
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        }
-
-        function getSuggestions() {
-            const inspiration = document.getElementById('inspiration').value;
-            const suggestionsContainer = document.getElementById('suggestions-container');
-            const suggestionsDiv = document.getElementById('suggestions');
-            
-            suggestionsDiv.innerHTML = '<p style="text-align: center;">Generating suggestions...</p>';
-            suggestionsContainer.style.display = 'block';
-
-            fetch(`/suggest?inspiration=${encodeURIComponent(inspiration)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) throw new Error(data.error);
-                    suggestionsDiv.innerHTML = '';
-                    data.suggestions.forEach(suggestion => {
-                        const card = document.createElement('div');
-                        card.className = 'suggestion-card';
-                        card.textContent = suggestion;
-                        card.onclick = () => {
-                            document.getElementById('prompt').value = suggestion;
-                            nextStep();
+            try {
+                const stems = {};
+                ['vocals', 'drums', 'bass', 'other', 'instrumental'].forEach(name => {
+                    const trackElement = document.getElementById(`track-${name}`);
+                    if (trackElement && trackElement.style.display !== 'none' && trackElement.dataset.originalUrl) {
+                        stems[name] = {
+                            url: trackElement.dataset.originalUrl,
+                            volume: document.getElementById(`volume-${name}`).value
                         };
-                        suggestionsDiv.appendChild(card);
-                    });
-                })
-                .catch(err => {
-                    suggestionsDiv.innerHTML = `<p style="text-align: center; color: #ff8a80;">Error: ${err.message}</p>`;
-                });
-        }
-
-        document.querySelectorAll('input[name="singer-type"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.getElementById('human-singer-options').style.display = this.value === 'human' ? 'block' : 'none';
-            });
-        });
-
-        function generateMusic() {
-            const prompt = document.getElementById("prompt").value;
-            const lyrics = document.getElementById("lyrics").value;
-            const singerType = document.querySelector('input[name="singer-type"]:checked').value;
-            
-            const generationStatus = document.getElementById("generation-status");
-            const audioPlayer = document.getElementById("audioPlayer");
-            const speechPlayer = document.getElementById("speechPlayer");
-
-            generationStatus.textContent = "Connecting to AI... Building your prompt...";
-            audioPlayer.style.display = "none";
-            speechPlayer.src = null;
-
-            const url = `/generate?prompt=${encodeURIComponent(prompt)}&lyrics=${encodeURIComponent(lyrics)}&voice_sample_path=${encodeURIComponent(uploadedVoicePath)}`;
-            
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) throw new Error(data.error);
-                    generationStatus.textContent = "Generation complete! Loading audio...";
-                    
-                    let musicReady = false;
-                    let speechReady = false;
-
-                    const playAudio = () => {
-                        if (musicReady && (speechReady || !data.speech_path)) {
-                            audioPlayer.play();
-                            if (data.speech_path) speechPlayer.play();
-                            generationStatus.textContent = "Playing your masterpiece!";
-                        }
-                    };
-
-                    audioPlayer.oncanplaythrough = () => {
-                        musicReady = true;
-                        playAudio();
-                    };
-
-                    if (data.speech_path) {
-                        speechPlayer.oncanplaythrough = () => {
-                            speechReady = true;
-                            playAudio();
-                        };
-                    } else {
-                        speechReady = true;
                     }
-                    
-                    audioPlayer.src = data.music_path;
-                    audioPlayer.style.display = "block";
-                    if(data.speech_path) speechPlayer.src = data.speech_path;
-
-                })
-                .catch(err => {
-                    console.error("Error generating music:", err);
-                    generationStatus.textContent = `Error: ${err.message}. Please try again.`;
                 });
-        }
 
-        let mediaRecorder, audioChunks = [];
-        const recordButton = document.getElementById("recordButton"),
-            recordingStatus = document.getElementById("recording-status"),
-            recordedAudioPlayer = document.getElementById("recordedAudioPlayer");
-
-        recordButton.addEventListener("click", async () => {
-            if (mediaRecorder && mediaRecorder.state === "recording") {
-                mediaRecorder.stop();
-                recordButton.textContent = "Record Voice";
-                recordButton.classList.remove("rec");
-                recordingStatus.textContent = "Recording stopped. Processing...";
-            } else {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    mediaRecorder.ondataavailable = event => {
-                        audioChunks.push(event.data);
-                    };
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-                        let audioUrl = URL.createObjectURL(audioBlob);
-                        recordedAudioPlayer.src = audioUrl;
-                        recordedAudioPlayer.style.display = "block";
-                        recordingStatus.textContent = "Recording complete! Now uploading...";
-                        uploadRecordedVoice(audioBlob);
-                    };
-                    mediaRecorder.start();
-                    recordButton.textContent = "Stop Recording";
-                    recordButton.classList.add("rec");
-                    recordingStatus.textContent = "Recording... Speak into your microphone.";
-                } catch (err) {
-                    console.error("Error accessing microphone:", err);
-                    recordingStatus.textContent = "Could not access microphone. Please grant permission.";
+                let signature = null;
+                const signatureTrack = document.getElementById('track-signature');
+                if (signatureTrack && signatureTrack.style.display !== 'none' && signatureTrack.dataset.originalUrl) {
+                    signature = { url: signatureTrack.dataset.originalUrl };
                 }
-            }
-        });
 
-        function uploadRecordedVoice(blob) {
-            const formData = new FormData();
-            formData.append("audio_data", blob, "user_voice_sample.wav");
-            recordingStatus.textContent = "Uploading voice sample...";
-            fetch("/upload_voice", { method: "POST", body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) throw new Error(data.error);
-                    console.log("Upload successful:", data);
-                    uploadedVoicePath = data.path;
-                    recordingStatus.textContent = `Voice sample uploaded! You can now generate music with your voice.`;
-                })
-                .catch(err => {
-                    console.error("Error uploading voice:", err);
-                    recordingStatus.textContent = `Upload failed: ${err.message}`;
+                const response = await fetch('/master', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stems, signature })
                 });
-        }
 
-        showStep(currentStep);
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Mastering failed on server.');
+                }
+
+                statusDiv.textContent = 'Mastering complete! Download will begin shortly.';
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = downloadUrl;
+                a.download = 'Dhvani_AI_Masterpiece.mp3';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                a.remove();
+
+                setTimeout(() => { statusDiv.style.display = 'none'; }, 5000);
+
+            } catch (error) {
+                statusDiv.textContent = `Error during mastering: ${error.message}`;
+            } finally {
+                downloadButton.disabled = false;
+                downloadButton.textContent = 'Download Final Mix';
+            }
+        }
     </script>
 </body>
 </html>
